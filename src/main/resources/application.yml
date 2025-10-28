@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: audit
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/TesBluMW"
+    username: "postgres"
+    password: "pgroot"
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 5000 #milliseconds
+      idle-timeout: 600000 #milliseconds
+      max-lifetime: 1800000 #milliseconds
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: user-audit
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+
+server:
+  port: 8081
