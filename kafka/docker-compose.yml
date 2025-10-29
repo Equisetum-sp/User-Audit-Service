@@ -1,3 +1,5 @@
+# Retrieved from https://developer.confluent.io/confluent-tutorials/kafka-on-docker/ on 29 October 2025
+
 services:
   broker:
     image: apache/kafka:latest
