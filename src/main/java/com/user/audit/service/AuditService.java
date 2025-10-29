@@ -29,24 +29,33 @@ public class AuditService {
         this.userRepository = userRepository;
     }
 
-    //TODO: handle exception for serialization error
-
     @RetryableTopic(
             attempts = "3",
-            backoff = @Backoff(delay = 1000, multiplier = 2),
+            backoff = @Backoff(delay = 5000, multiplier = 2),
             kafkaTemplate = "kafkaTemplate",
             dltStrategy = DltStrategy.FAIL_ON_ERROR
     )
-    @KafkaListener(topics = Constant.KAFKA_TOPIC, groupId = "user-audit")
-    public void createUserListener(User user){
+    @KafkaListener(topics = Constant.KAFKA_TOPIC, groupId = "user-audit", containerFactory = "kafkaListenerContainerFactory")
+    public void receiveUserListener(User user){
+        long startTime = System.currentTimeMillis();
+        LOGGER.info("----- Start Receive User Listener -----");
+
         LOGGER.info("Received user: {}", user);
 
-        userRepository.save(new UserEntity(UUID.randomUUID(), user.getName(), user.getEmail(), user.getPassword()));
+        try {
+            userRepository.save(new UserEntity(UUID.randomUUID(), user.getName(), user.getEmail(), user.getPassword()));
+        } catch (Exception e){
+            LOGGER.error("Exception: ", e);
+            throw e;
+        } finally {
+            LOGGER.info("----- End Receive User Listener in {} ms -----", System.currentTimeMillis() - startTime);
+        }
     }
 
     @DltHandler
     public void dltHandler(User user,
-                           @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-        LOGGER.warn("DLT on topic {} with message {}", topic, user);
+                           @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                           @Header(KafkaHeaders.EXCEPTION_MESSAGE) String exceptionMsg) {
+        LOGGER.warn("DLT on topic {} with message {} due to {}", topic, user, exceptionMsg);
     }
 }
