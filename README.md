@@ -56,33 +56,6 @@ HTTP request -> "Create User" service -> Kafka topic "user-events" -> "Receive u
     }
     ```
 
-- ### Claim Quest
-
-  Claim an unlocked quest and unlocks the next quests in line
-
-  **Method:** POST
-
-  **Additional Headers:**
-    - Authorization - Bearer Token
-
-  **Body:** Application/Json
-    - questOfferId - String
-
-  **Request Example:**
-    ```shell
-    curl -X POST https://serverhost/
-    -H 'Authorization: Bearer LOGIN_BEARER_TOKEN'
-    -d '{"questOfferId": ""0192d205-6d45-7874-9e8a-ff1de5362a78""}'
-    ```
-
-  **Response Example**
-    ```json
-    {
-        "errorCode": "0",
-        "errorMessage": "Success"
-    }
-    ```
-
 ## How to run:
 Clone this repository then run following maven command:
 ```shell
