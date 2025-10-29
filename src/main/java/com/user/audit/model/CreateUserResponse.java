@@ -1,5 +1,7 @@
 package com.user.audit.model;
 
+import java.util.Objects;
+
 public class CreateUserResponse {
     private String errorCode;
     private String errorMessage;
@@ -23,5 +25,16 @@ public class CreateUserResponse {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CreateUserResponse that)) return false;
+        return Objects.equals(errorCode, that.errorCode) && Objects.equals(errorMessage, that.errorMessage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(errorCode, errorMessage);
     }
 }
